@@ -5,12 +5,20 @@
 
         <h1>TensorFlow</h1>
         <div id="tensor-form">
-            <form method="POST" class="post-form">{% csrf_token %}
+            <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
                 {{ form.as_p }}
                 <button id="button-68" role="button" type="submit">submit</button>
             </form>
         </div>
         <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+
+        <div>
+            <p>output:</p>
+            {% if title %}
+                <p>{{ title }}</p>
+                <img src="{{ image.image.url }}" alt="image">
+            {% endif %}
+        </div>
 
     {% else %}
 
