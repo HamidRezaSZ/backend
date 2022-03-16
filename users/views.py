@@ -1,20 +1,17 @@
-from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
+from django.contrib.auth.forms import AuthenticationForm
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth import logout, authenticate, login
+
 from .forms import SignUpForm
-from django.http.response import HttpResponse
 
 
-def index(request):
-    # first page of users' model for select between signup or login
-
+def index(request):  # first page of users' app for select between signup or login
     return render(request, "users/index.html")
 
 
-def signup(request):
-    # signup users
-
+def signup(request):  # signup users
     if request.method == 'POST':
         form = SignUpForm(request.POST)
 
@@ -28,20 +25,31 @@ def signup(request):
         return render(request, 'users/signUp.html', {'form': form})
 
 
-class LoginAPIView(GenericAPIView):
-    # login users
+def login_request(request):  # login users
+    if request.method == 'POST':
+        form = AuthenticationForm(request=request, data=request.POST)
 
-    permission_classes = (IsAuthenticated,)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect(reverse("classify:index"))
 
-    def get(self, request):
-        return Response(data={'message': f"Welcome to our website, {request.user.username}!"})
+            else:
+                return HttpResponse("Invalid username or password.")
+
+        else:
+            return HttpResponse("Invalid username or password.")
+
+    if request.method == "GET":
+        form = AuthenticationForm()
+        return render(request=request,
+                      template_name="users/logIn.html",
+                      context={"form": form})
 
 
-class LogoutAPIView(GenericAPIView):
-    # logout users
-
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        request.user.auth_token.delete()
-        return Response(data={'message': f"{request.user.username}, you have successfully logged out!"})
+def logout_request(request):  # logout users
+    logout(request)
+    return HttpResponse("Logged out successfully!")

@@ -3,9 +3,7 @@ from django.contrib.auth.models import User
 from .models import Profile
 
 
-class SignUpForm(UserCreationForm):
-    # Form for signup users
-
+class SignUpForm(UserCreationForm):  # Form for signup users
     class Meta:
         model = User
         fields = ('username', 'password1', 'password2')

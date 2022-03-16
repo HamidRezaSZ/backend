@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'classify/layout.html' %}
+{% block  body %}
 
-</body>
-</html>
+    {% if user.is_authenticated %}
+
+        <h1>TensorFlow</h1>
+        <div id="tensor-form">
+            <form method="POST" class="post-form">
+                {{ form.as_p }}
+                <button id="button-68" role="button" type="submit">submit</button>
+            </form>
+        </div>
+        <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+
+    {% else %}
+
+        <h2>You are not login</h2>
+        <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+
+    {% endif %}
+
+{% endblock %}
