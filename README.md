@@ -11,3 +11,4 @@ The choice of language, frameworks, and database is up to you.
 - [ ] Authentication System: A simple token-based login/logout would do.
 - [ ] Dashboard Panel for Authenticated Admin Users: Single-page simple stats report. 0 lines of CSS would do.
 - [ ] Landing Page: Serving a static landing page. If you believe that your framework of choice shouldn't be serving the static page, explain why.
+- [ ] Dockerization.
