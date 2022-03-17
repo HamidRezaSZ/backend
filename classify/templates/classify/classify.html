@@ -1,30 +1,46 @@
-{% extends 'classify/layout.html' %}
-{% block  body %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Classify</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'users/css/bootstrap.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static "classify/style.css" %}"/>
+</head>
+<body>
 
-    {% if user.is_authenticated %}
-
-        <h1>TensorFlow</h1>
-        <div id="tensor-form">
-            <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
-                {{ form.as_p }}
-                <button id="button-68" role="button" type="submit">submit</button>
-            </form>
+{% for message in messages %}
+    <div class="container-fluid p-0">
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+            {{ message }}
         </div>
-        <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+    </div>
+{% endfor %}
 
-        <div>
-            <p>output:</p>
-            {% if title %}
-                <p>{{ title }}</p>
-                <img src="{{ image.image.url }}" alt="image">
-            {% endif %}
-        </div>
+<div class="alert alert-info">
+    <strong>Info!</strong> This website use <a href="https://www.cs.toronto.edu/~kriz/cifar.html">CIFAR10</a> dataset,
+    for more accuracy please use this dataset categories.
+</div>
 
-    {% else %}
+<form action="{% url 'users:logout' %}" method="post">{% csrf_token %}
+    <button class="button-58" role="button" type="submit">Logout</button>
+</form>
 
-        <h2>You are not login</h2>
-        <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+<h1>TensorFlow</h1>
+<div id="tensor-form">
+    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
+        {{ form.as_p }}
+        <button class="button-68" role="button" type="submit">submit</button>
+    </form>
+</div>
 
+<div id="output-div">
+    <h3 id="output">output:</h3>
+    {% if title %}
+        <h4 id="title">Predict: {{ title }}</h4>
+        <img src="{{ image.image.url }}" alt="image" width="450" height="300">
     {% endif %}
-
-{% endblock %}
+</div>
+</body>
+</html>

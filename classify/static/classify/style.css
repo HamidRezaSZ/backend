@@ -1,3 +1,21 @@
+body {
+    background-color: #e9ecef;
+}
+
+h1 { /*classify header*/
+    text-align: center;
+    color: #2e3750;
+}
+
+#tensor-form { /*image upload form*/
+    margin: 5% 0 2% 33%;
+}
+
+label { /* form label */
+    font-weight: bold;
+    font-size: 20px;
+}
+
 .button-68 { /* classify submit button */
     appearance: none;
     backface-visibility: hidden;
@@ -13,10 +31,11 @@
     font-size: 16px;
     font-weight: 600;
     letter-spacing: normal;
+    margin: 4% 0 2% 22%;
     line-height: 1.5;
     outline: none;
     overflow: hidden;
-    padding: 13px 20px;
+    padding: 13px 18px;
     position: relative;
     text-align: center;
     text-decoration: none;
@@ -43,4 +62,99 @@
 
 .button-68:hover {
     box-shadow: rgba(39, 174, 96, .2) 0 6px 12px;
+}
+
+#id_image { /* image filed */
+    background-color: #222;
+    border-radius: 4px;
+    border-style: none;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Farfetch Basis", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0;
+    max-width: none;
+    min-height: 44px;
+    min-width: 10px;
+    outline: none;
+    overflow: hidden;
+    padding: 9px 20px 8px;
+    position: relative;
+    text-align: center;
+    text-transform: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+#id_image:hover,
+#id_image:focus {
+    opacity: .75;
+}
+
+.button-58 { /* logout button */
+    align-items: center;
+    background-color: #06f;
+    border: 2px solid #06f;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    max-width: none;
+    fill: #000;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    height: 38px;
+    justify-content: center;
+    letter-spacing: -.8px;
+    line-height: 24px;
+    min-width: 120px;
+    outline: 0;
+    padding: 0 17px;
+    text-align: center;
+    text-decoration: none;
+    transition: all .3s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.button-58:focus {
+    color: #171e29;
+}
+
+.button-58:hover {
+    background-color: #3385ff;
+    border-color: #3385ff;
+    fill: #06f;
+}
+
+.button-58:active {
+    background-color: #3385ff;
+    border-color: #3385ff;
+    fill: #06f;
+}
+
+@media (min-width: 768px) {
+    .button-58 {
+        min-width: 170px;
+    }
+}
+
+#output { /* output p tag */
+    font-weight: bold;
+    font-size: 28px;
+}
+
+h4 { /* image title */
+    text-align: center;
+}
+
+img {
+    margin-left: 33%;
 }

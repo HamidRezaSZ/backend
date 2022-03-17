@@ -1,9 +1,0 @@
-{% extends 'users/layout.html' %} {% block body %}
-    <h2>Sign Up</h2>
-    <div id="sign-form">
-        <form method="POST" class="post-form">
-            {% csrf_token %} {{ form.as_p }}
-            <button id="button-31" role="button" type="submit">Sign Up</button>
-        </form>
-    </div>
-{% endblock %}

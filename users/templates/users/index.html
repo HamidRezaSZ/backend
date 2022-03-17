@@ -1,11 +1,46 @@
-{% extends 'users/layout.html' %}
-{% block  body %}
-    <div id="buttons-index">
-        <h1>Welcome to our website</h1>
-        <br>
-        <button class="button-53" onClick="self.location='users/signup/'" role="button"><span
-                class="text">Sign Up</span></button>
-        <button class="button-53" onClick="self.location='users/login/'" role="button"><span class="text">Log In</span>
-        </button>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Users</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'users/css/bootstrap.css' %}"/>
+    <link type="text/css" rel="stylesheet" href="{% static "users/style.css" %}"/>
+    <script src="{% static 'users/script.js' %}"></script>
+</head>
+<body>
+
+{% for message in messages %}
+    <div class="container-fluid p-0">
+        <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+            {{ message }}
+        </div>
     </div>
-{% endblock %}
+{% endfor %}
+
+<div id="buttons-index">
+    <h1>Welcome to our website</h1>
+    <br>
+    <a id="sign" class="button-53" role="button">Sign Up</a>
+    <a id="log" class="button-53" role="button">Log In</a>
+</div>
+
+<div id="log-form" style="display: none">
+    <h2>Log In</h2>
+    <form method="POST" class="post-form">
+        {% csrf_token %} {{ formLog.as_p }}
+        <button id="button-32" role="button" type="submit" class="save btn btn-default">Log In</button>
+    </form>
+</div>
+
+<div id="sign-form" style="display: none">
+    <h2>Sign Up</h2>
+    <form method="POST" class="post-form">
+        {% csrf_token %} {{ formSign.as_p }}
+        <button id="button-31" role="button" type="submit">Sign Up</button>
+    </form>
+</div>
+
+</body>
+</html>
