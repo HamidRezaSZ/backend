@@ -1,5 +1,25 @@
 {% extends 'users/layout.html' %}
 {% block  body %}
+    {% if signup %}
+        <div class="alert alert-success">
+            <strong>Success!</strong> User created successfully!
+        </div>
+    {% endif %}
+    {% if logout %}
+        <div class="alert alert-success">
+            <strong>Success!</strong> You successfully logged out!
+        </div>
+    {% endif %}
+    {% if login %}
+        <div class="alert alert-warning">
+            <strong>Warning!</strong> You are not login!
+        </div>
+    {% endif %}
+    {% if get %}
+        <div class="alert alert-danger">
+            <strong>Danger!</strong> only Post request allowed!
+        </div>
+    {% endif %}
     <div id="buttons-index">
         <h1>Welcome to our website</h1>
         <br>
@@ -7,5 +27,11 @@
                 class="text">Sign Up</span></button>
         <button class="button-53" onClick="self.location='users/login/'" role="button"><span class="text">Log In</span>
         </button>
+    </div>
+    <div id="login">
+
+    </div>
+    <div id="signup">
+
     </div>
 {% endblock %}

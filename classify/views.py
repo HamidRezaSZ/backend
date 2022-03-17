@@ -33,19 +33,21 @@ def tensor_flow(file_path):  # tensorFlow function get image, predict label of t
 
 
 def index(request):  # first page of classify app
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = SetInformationForm(request.POST, request.FILES)
 
-    if request.method == 'POST':
-        form = SetInformationForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                image = form.cleaned_data.get("image")
+                title = tensor_flow(image)
+                img_obj = form.instance
+                return render(request, "classify/classify.html", {'title': title, 'image': img_obj})
 
-        if form.is_valid():
-            form.save()
-            image = form.cleaned_data.get("image")
-            title = tensor_flow(image)
-            img_obj = form.instance
-            return render(request, "classify/classify.html", {'title': title, 'image': img_obj})
+            return HttpResponse(f"{form.errors}")
 
-        return HttpResponse(f"{form.errors}")
+        if request.method == "GET":
+            form = SetInformationForm()
+            return render(request, "classify/classify.html", {'form': form})
 
-    if request.method == "GET":
-        form = SetInformationForm()
-        return render(request, "classify/classify.html", {'form': form})
+    return render(request, "users/index.html", {'login': True})

@@ -1,30 +1,30 @@
-{% extends 'classify/layout.html' %}
-{% block  body %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Classify</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link type="text/css" rel="stylesheet" href="{% static "classify/style.css" %}"/>
+</head>
+<body>
+<h1>TensorFlow</h1>
+<div id="tensor-form">
+    <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
+        {{ form.as_p }}
+        <button id="button-68" role="button" type="submit">submit</button>
+    </form>
+</div>
+<form action="{% url 'users:logout' %}" method="post">{% csrf_token %}
+    <button id="button-68" role="button" type="submit">Logout</button>
+</form>
 
-    {% if user.is_authenticated %}
-
-        <h1>TensorFlow</h1>
-        <div id="tensor-form">
-            <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
-                {{ form.as_p }}
-                <button id="button-68" role="button" type="submit">submit</button>
-            </form>
-        </div>
-        <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
-
-        <div>
-            <p>output:</p>
-            {% if title %}
-                <p>{{ title }}</p>
-                <img src="{{ image.image.url }}" alt="image">
-            {% endif %}
-        </div>
-
-    {% else %}
-
-        <h2>You are not login</h2>
-        <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-
+<div>
+    <p>output:</p>
+    {% if title %}
+        <p>{{ title }}</p>
+        <img src="{{ image.image.url }}" alt="image">
     {% endif %}
-
-{% endblock %}
+</div>
+</body>
+</html>
