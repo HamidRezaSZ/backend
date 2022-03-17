@@ -1,54 +1,43 @@
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+from django.contrib import messages
 
 from .forms import SignUpForm
 
 
 def index(request):  # first page of users' app for select between signup or login
-    return render(request, "users/index.html")
-
-
-def signup(request):  # signup users
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return render(request, 'users/index.html', {'signup': True})
-
-        return HttpResponse(f"{form.errors}")
     if request.method == "GET":
-        form = SignUpForm()
-        return render(request, 'users/signUp.html', {'form': form})
+        form_sign = SignUpForm()  # signup form
+        form_log = AuthenticationForm()  # login form
+        return render(request, 'users/index.html', {'formSign': form_sign, 'formLog': form_log})
 
-
-def login_request(request):  # login users
     if request.method == 'POST':
-        form = AuthenticationForm(request=request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+        form_sign = SignUpForm(request.POST)  # signup user
+        if form_sign.is_valid():
+            form_sign.save()
+            messages.success(request, "User created successfully!")
+            return HttpResponseRedirect(reverse("index"))
+
+        form_log = AuthenticationForm(request=request, data=request.POST)  # login users
+        if form_log.is_valid():
+            username = form_log.cleaned_data.get('username')
+            password = form_log.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
-                login(request, user)
                 Token.objects.get_or_create(user=user)
+                login(request, user)
                 return HttpResponseRedirect(reverse("classify:index"))
 
             else:
-                return HttpResponse("Invalid username or password.")
+                messages.error(request, "Invalid username or password!")
+                return HttpResponseRedirect(reverse("index"))
 
-        else:
-            return HttpResponse("Invalid username or password.")
-
-    if request.method == "GET":
-        form = AuthenticationForm()
-        return render(request=request,
-                      template_name="users/logIn.html",
-                      context={"form": form})
+        messages.error(request, "Error!")
+        return HttpResponseRedirect(reverse("index"))
 
 
 def logout_request(request):  # logout users
@@ -56,14 +45,9 @@ def logout_request(request):  # logout users
     if request.method == 'POST':
         if request.user.is_authenticated:
             logout(request)
-            return render(request=request,
-                          template_name="users/index.html",
-                          context={"logout": True})
-        return render(request=request,
-                      template_name="users/index.html",
-                      context={"login": True})
+            messages.success(request, 'You successfully logged out!')
+        return HttpResponseRedirect(reverse("index"))
 
     if request.method == "GET":
-        return render(request=request,
-                      template_name="users/index.html",
-                      context={"get": True})
+        messages.error(request, 'Only POST method allowed!')
+        return HttpResponseRedirect(reverse("index"))

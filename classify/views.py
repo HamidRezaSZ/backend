@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from .forms import SetInformationForm
-from django.http.response import HttpResponse
 from PIL import Image
 import numpy
 from keras.models import load_model
+from django.contrib import messages
+from django.http.response import HttpResponseRedirect
+from django.urls import reverse
 
 model = load_model('classify/CIFAR10.h5')  # use ready file for increase performance
 
@@ -44,10 +46,12 @@ def index(request):  # first page of classify app
                 img_obj = form.instance
                 return render(request, "classify/classify.html", {'title': title, 'image': img_obj})
 
-            return HttpResponse(f"{form.errors}")
+            messages.error(request, f"{form.errors}")
+            return HttpResponseRedirect(reverse("classify:index"))
 
         if request.method == "GET":
             form = SetInformationForm()
             return render(request, "classify/classify.html", {'form': form})
 
-    return render(request, "users/index.html", {'login': True})
+    messages.error(request, 'You are not login!')
+    return HttpResponseRedirect(reverse("index"))
