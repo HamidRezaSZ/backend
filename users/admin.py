@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 
 
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):  # change admin styles
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info', {
@@ -10,7 +10,6 @@ class UserAdmin(admin.ModelAdmin):
                 'first_name',
                 'last_name',
                 'email',
-                'country'
             )
         }),
         ('Permissions', {
@@ -27,6 +26,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff']
     search_fields = ['username', 'first_name', 'last_name', 'email']
     sortable_by = ['username', 'first_name', 'last_name', 'is_staff']
+    readonly_fields = ['last_login', 'date_joined']
 
 
 admin.site.unregister(User)

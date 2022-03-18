@@ -30,7 +30,11 @@
 <h1>TensorFlow</h1>
 <div id="tensor-form">
     <form method="POST" class="post-form" enctype="multipart/form-data">{% csrf_token %}
-        {{ form.as_p }}
+        <p>
+            <label for="id_image">Image:</label>
+            <input type="file" name="image" accept="image/*" required="" id="id_image">
+        </p>
+
         <button class="button-68" role="button" type="submit">submit</button>
     </form>
 </div>

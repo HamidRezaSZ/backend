@@ -1,16 +1,17 @@
 from django.shortcuts import render
-from .forms import SetInformationForm
+from .serializers import SetInformationSerializer
 from PIL import Image
 import numpy
 from keras.models import load_model
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
+from rest_framework.generics import GenericAPIView
 
 model = load_model('classify/CIFAR10.h5')  # use ready file for increase performance
 
 classes = {  # dataset labels
-    0: 'aeroplane',
+    0: 'airplane',
     1: 'automobile',
     2: 'bird',
     3: 'cat',
@@ -34,24 +35,21 @@ def tensor_flow(file_path):  # tensorFlow function get image, predict label of t
     return result
 
 
-def index(request):  # first page of classify app
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            form = SetInformationForm(request.POST, request.FILES)
+class Index(GenericAPIView):  # first page of classify app
+    serializer_class = SetInformationSerializer
 
-            if form.is_valid():
-                form.save()
-                image = form.cleaned_data.get("image")
-                title = tensor_flow(image)
-                img_obj = form.instance
-                return render(request, "classify/classify.html", {'title': title, 'image': img_obj})
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
 
-            messages.error(request, f"{form.errors}")
-            return HttpResponseRedirect(reverse("classify:index"))
+        if serializer.is_valid():
+            serializer.save()
+            image = serializer.validated_data['image']
+            title = tensor_flow(image)
+            img_obj = serializer.instance
+            return render(request, "classify/classify.html", {'title': title, 'image': img_obj})
 
-        if request.method == "GET":
-            form = SetInformationForm()
-            return render(request, "classify/classify.html", {'form': form})
+        messages.error(request, f"{serializer.errors}")
+        return HttpResponseRedirect(reverse("classify:index"))
 
-    messages.error(request, 'You are not login!')
-    return HttpResponseRedirect(reverse("index"))
+    def get(self, request):
+        return render(request, 'classify/classify.html')

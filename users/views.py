@@ -1,53 +1,54 @@
 from django.shortcuts import render
-from django.contrib.auth.forms import AuthenticationForm
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth import authenticate, login, logout
-from rest_framework.authtoken.models import Token
 from django.contrib import messages
-
-from .forms import SignUpForm
+from rest_framework.generics import CreateAPIView
+from rest_framework.views import APIView
+from .serializers import UserSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 
 def index(request):  # first page of users' app for select between signup or login
-    if request.method == "GET":
-        form_sign = SignUpForm()  # signup form
-        form_log = AuthenticationForm()  # login form
-        return render(request, 'users/index.html', {'formSign': form_sign, 'formLog': form_log})
+    return render(request, 'users/index.html')
 
-    if request.method == 'POST':
-        form_sign = SignUpForm(request.POST)  # signup user
-        if form_sign.is_valid():
-            form_sign.save()
+
+class Register(CreateAPIView):  # signup users
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        user_serializer = UserSerializer(data=request.data)
+        if user_serializer.is_valid():
+            user_serializer.save()
             messages.success(request, "User created successfully!")
             return HttpResponseRedirect(reverse("index"))
+        messages.error(request, f"{user_serializer.errors}")
+        return HttpResponseRedirect(reverse("index"))
 
-        form_log = AuthenticationForm(request=request, data=request.POST)  # login users
-        if form_log.is_valid():
-            username = form_log.cleaned_data.get('username')
-            password = form_log.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                Token.objects.get_or_create(user=user)
-                login(request, user)
-                return HttpResponseRedirect(reverse("classify:index"))
-
-            else:
-                messages.error(request, "Invalid username or password!")
-                return HttpResponseRedirect(reverse("index"))
-
-        messages.error(request, "Error!")
+    def get(self, request):
         return HttpResponseRedirect(reverse("index"))
 
 
-def logout_request(request):  # logout users
+class Logout(APIView):  # logout users
 
-    if request.method == 'POST':
-        if request.user.is_authenticated:
-            logout(request)
-            messages.success(request, 'You successfully logged out!')
+    def post(self, request):
+        messages.success(request, 'You successfully logged out!')
         return HttpResponseRedirect(reverse("index"))
 
-    if request.method == "GET":
-        messages.error(request, 'Only POST method allowed!')
+    def get(self, request):
+        return HttpResponseRedirect(reverse("index"))
+
+
+class Login(ObtainAuthToken):  # login users
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            token, created = Token.objects.get_or_create(user=user)  # create token
+            return HttpResponseRedirect(reverse("classify:index"))
+        messages.error(request, f"{serializer.errors}")
+        return HttpResponseRedirect(reverse("index"))
+
+    def get(self, request):
         return HttpResponseRedirect(reverse("index"))
