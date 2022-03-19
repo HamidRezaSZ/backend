@@ -52,9 +52,4 @@ class Index(GenericAPIView):  # first page of classify app
         return HttpResponseRedirect(reverse("classify:index"))
 
     def get(self, request):
-        try:  # login permission
-            request.META['HTTP_REFERER']
-        except:
-            return HttpResponseRedirect(reverse("index"))
-
         return render(request, 'classify/classify.html')
