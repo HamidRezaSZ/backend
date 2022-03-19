@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.urls import reverse
 from rest_framework.generics import GenericAPIView
+from rest_framework.authtoken.models import Token
 
 model = load_model('classify/CIFAR10.h5')  # use ready file for increase performance
 
@@ -52,4 +53,8 @@ class Index(GenericAPIView):  # first page of classify app
         return HttpResponseRedirect(reverse("classify:index"))
 
     def get(self, request):
+        token = request.COOKIES.get("Authorization")
+        if not token or not Token.objects.filter(key=token):
+            messages.error(request, "You are not login!")
+            return HttpResponseRedirect(reverse("index"))
         return render(request, 'classify/classify.html')

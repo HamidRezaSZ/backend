@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 from rest_framework.generics import CreateAPIView
@@ -32,8 +32,15 @@ class Register(CreateAPIView):  # signup users
 class Logout(APIView):  # logout users
 
     def post(self, request):
+        token = request.COOKIES.get("Authorization")
+        if not token or not Token.objects.filter(key=token):
+            messages.error(request, "You are not login!")
+            return HttpResponseRedirect(reverse("index"))
+        response = HttpResponseRedirect(reverse("index"))
+        response.delete_cookie('Authorization')
+        Token.objects.get(key=token).delete()
         messages.success(request, 'You successfully logged out!')
-        return HttpResponseRedirect(reverse("index"))
+        return response
 
     def get(self, request):
         return HttpResponseRedirect(reverse("index"))
@@ -46,7 +53,10 @@ class Login(ObtainAuthToken):  # login users
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)  # create token
-            return HttpResponseRedirect(reverse("classify:index"))
+            response = HttpResponseRedirect(reverse("classify:index"))
+            if not request.COOKIES.get('Authorization'):
+                response.set_cookie(key="Authorization", value=token, httponly=True)
+            return response
         messages.error(request, f"{serializer.errors}")
         return HttpResponseRedirect(reverse("index"))
 
